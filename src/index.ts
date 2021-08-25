@@ -56,11 +56,15 @@ const main = async () => {
         }),
         context: ({ req, res }): MyContext => ({
             em: orm.em,
-            req,
-            res
+            req: req,
+            res: res
         }), // make orm entity manager accessible
         plugins: [
-            ApolloServerPluginLandingPageGraphQLPlayground(),
+            ApolloServerPluginLandingPageGraphQLPlayground({
+                settings: {
+                    "request.credentials": "include" // check session cookies in playground
+                }
+            }),
         ],
     });
 

@@ -35,7 +35,7 @@ export class UserResolver {
     // check logged in or not
     @Query(() => User, { nullable: true })
     async me(
-        @Ctx() { req, em }: MyContext
+        @Ctx() { em, req }: MyContext
     ) {
         console.log("session:: ", req.session);
         if (!req.session.userId) {
@@ -126,7 +126,7 @@ export class UserResolver {
         }
 
         req.session.userId = user.id;
-
+        console.log("Login session:: ", req.session);
         return {
             user,
         };
