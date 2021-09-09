@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { __prod__ } from "./constants";
+import { COOKIE_NAME, __prod__ } from "./constants";
 import { MikroORM } from "@mikro-orm/core";
 import mikroConfig from "./mikro-orm.config";
 import express from 'express';
@@ -26,15 +26,15 @@ const main = async () => {
     // session runs before apollo
     const RedisStore = connectRedis(session)
     const redisClient = redis.createClient() // extract?
-
     app.use(
         // apply cors to all routes
         cors({
             origin: "http://localhost:3000",
             credentials: true,
-        }),
+        }));
+    app.use(
         session({
-            name: 'qid',
+            name: COOKIE_NAME,
             store: new RedisStore({
                 client: redisClient,
                 disableTTL: true,
@@ -44,13 +44,13 @@ const main = async () => {
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 10,//10 years
                 httpOnly: true,
                 sameSite: 'lax', //csrf
-                secure: false && __prod__ // cookie only works in https
+                secure: __prod__ // cookie only works in https
             },
             saveUninitialized: false,
             secret: 'somethingrandenvvar',// hide this
             resave: false,
         })
-    )
+    );
 
     // session used in apollo
     const apolloServer = new ApolloServer({
